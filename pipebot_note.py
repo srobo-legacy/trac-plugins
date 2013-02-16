@@ -23,14 +23,14 @@ class PipebotNotePlugin(Component):
 
 	def wiki_page_version_deleted(self, page):
 		self.write_message("A version of wiki page %s has been deleted" % self.bold(page.name))
-	
+
 	def wiki_page_renamed(self, page, old_name):
 		self.write_message("Wiki page %s renamed to %s" % (self.bold(old_name), self.bold(page.name)))
-	
+
 	# ITicketChangeListener
 	def ticket_created(self, ticket):
 		self.write_message("Ticket %s created by %s: %s" % (self.bold(ticket["summary"]), self.green(ticket["reporter"]), self.ticket_link(ticket)))
-	
+
 	def ticket_changed(self, ticket, comment, author, old_values):
 		self.write_message("Ticket %s modified by %s: %s" % (self.bold(ticket["summary"]), self.green(author), self.ticket_link(ticket)))
 
@@ -45,10 +45,10 @@ class PipebotNotePlugin(Component):
 
 	def green(self, text):
 		return "\x033%s\x0f" % text
-	
+
 	def orange(self, text):
 		return "\x037%s\x0f" % text
-	
+
 	def bold(self, text):
 		return "\x02%s\x02" % text
 
