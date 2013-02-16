@@ -4,6 +4,7 @@ from trac.core import *
 from trac.wiki import IWikiChangeListener
 from trac.ticket import ITicketChangeListener
 
+import codecs
 import urllib
 
 pipebot_file = "/tmp/hash-srobo"
@@ -39,8 +40,9 @@ class PipebotNotePlugin(Component):
 
 	def write_message(self, msg):
 		self.log.debug("Pipebot msg: \"%s\"" % msg)
-		f = open(pipebot_file, 'a')
-		f.write("%s: %s\n" % (self.orange("trac"), msg))
+		full_msg = unicode("%s: %s\n" % (self.orange("trac"), msg))
+		f = codecs.open(pipebot_file, encoding='utf-8', mode='a')
+		f.write(full_msg)
 		f.close()
 
 	def green(self, text):
