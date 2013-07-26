@@ -14,10 +14,10 @@ class PipebotNotePlugin(Component):
 
 	# IWikiChangeListener API
 	def wiki_page_added(self, page):
-		self.write_message("A new wiki page %s has been created" % self.bold(page.name))
+		self.write_message("A new wiki page %s has been created: %s" % (self.bold(page.name), self.wiki_normal_link(page)))
 
 	def wiki_page_changed(self, page, version, t, comment, author, ipnr):
-		self.write_message("Wiki page %s modified by %s (%s): %s" % (self.bold(page.name), self.green(author), comment, self.wiki_link(page)))
+		self.write_message("Wiki page %s modified by %s (%s): %s" % (self.bold(page.name), self.green(author), comment, self.wiki_diff_link(page)))
 
 	def wiki_page_deleted(self, page):
 		self.write_message("Wiki page %s deleted" % self.bold(page.name))
@@ -26,7 +26,7 @@ class PipebotNotePlugin(Component):
 		self.write_message("A version of wiki page %s has been deleted" % self.bold(page.name))
 
 	def wiki_page_renamed(self, page, old_name):
-		self.write_message("Wiki page %s renamed to %s" % (self.bold(old_name), self.bold(page.name)))
+		self.write_message("Wiki page %s renamed to %s: %s" % (self.bold(old_name), self.bold(page.name), self.wiki_normal_link(page)))
 
 	# ITicketChangeListener
 	def ticket_created(self, ticket):
@@ -57,5 +57,8 @@ class PipebotNotePlugin(Component):
 	def ticket_link(self, ticket):
 		return "http://trac.srobo.org/ticket/%s" % ticket.id
 
-	def wiki_link(self, page):
+	def wiki_diff_link(self, page):
 		return "http://trac.srobo.org/wiki/%s?action=diff&version=%i&old_version=%i" % (urllib.quote(page.name), page.version, page.version-1)
+
+	def wiki_normal_link(self, page):
+		return "http://trac.srobo.org/wiki/%s" % (urllib.quote(page.name))
