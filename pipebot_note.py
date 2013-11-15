@@ -33,7 +33,7 @@ class PipebotNotePlugin(Component):
 		self.write_message("Ticket %s created by %s: %s" % (self.bold(ticket["summary"]), self.green(ticket["reporter"]), self.ticket_link(ticket)))
 
 	def ticket_changed(self, ticket, comment, author, old_values):
-		self.write_message("Ticket %s modified by %s: %s" % (self.bold(ticket["summary"]), self.green(author), self.ticket_link(ticket)))
+		self.write_message("Ticket %s modified by %s: %s" % (self.bold(ticket["summary"]), self.green(author), self.last_comment_link(ticket)))
 
 	def ticket_deleted(self, ticket):
 		self.write_message("Ticket %s deleted" % self.bold(ticket["summary"]))
@@ -56,6 +56,17 @@ class PipebotNotePlugin(Component):
 
 	def ticket_link(self, ticket):
 		return "http://trac.srobo.org/ticket/%s" % ticket.id
+
+	def last_comment_id(self, ticket):
+		changetime = ticket['changetime']
+		log = ticket.get_changelog(changetime)
+		cnum = int(log[0][3])
+		return cnum
+
+	def last_comment_link(self, ticket):
+		lcid = self.last_comment_id(ticket)
+		link = self.ticket_link(ticket) + "#comment:%d" % (lcid)
+		return link
 
 	def wiki_diff_link(self, page):
 		return "http://trac.srobo.org/wiki/%s?action=diff&version=%i&old_version=%i" % (urllib.quote(page.name), page.version, page.version-1)
