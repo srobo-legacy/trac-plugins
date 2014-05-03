@@ -1,0 +1,3 @@
+[submodule "pipebot"]
+	path = pipebot
+	url = git://srobo.org/pipebot.git

@@ -7,7 +7,7 @@ from trac.ticket import ITicketChangeListener
 import codecs
 import urllib
 
-pipebot_file = "/tmp/hash-srobo"
+import pipebot
 
 class PipebotNotePlugin(Component):
 	implements(IWikiChangeListener, ITicketChangeListener)
@@ -40,10 +40,12 @@ class PipebotNotePlugin(Component):
 
 	def write_message(self, msg):
 		self.log.debug("Pipebot msg: \"%s\"" % msg)
-		full_msg = unicode("%s: %s\n" % (self.orange("trac"), msg))
-		f = codecs.open(pipebot_file, encoding='utf-8', mode='a')
-		f.write(full_msg)
-		f.close()
+		try:
+			full_msg = unicode("%s: %s\n" % (self.orange("trac"), msg))
+			encoded_msg = codecs.encode(full_msg, 'utf-8')
+			pipebot.say(encoded_msg)
+		except:
+			pass
 
 	def green(self, text):
 		return "\x033%s\x0f" % text
