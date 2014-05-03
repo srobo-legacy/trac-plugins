@@ -7,7 +7,24 @@ from trac.ticket import ITicketChangeListener
 import codecs
 import urllib
 
-pipebot_file = "/tmp/hash-srobo"
+## Code copied from pipebot.git/say.py
+
+import os
+
+PIPE_PATH="/tmp/hash-srobo"
+
+def open_fifo():
+    fifofd = os.open( PIPE_PATH, os.O_WRONLY | os.O_NONBLOCK )
+    return fifofd
+
+def say(message):
+    if not message.endswith('\n'):
+        message += '\n'
+    fd = open_fifo()
+    with os.fdopen(fd, 'a') as fifo:
+        fifo.write(message)
+
+## End code copied from pipebot.git/say.py
 
 class PipebotNotePlugin(Component):
 	implements(IWikiChangeListener, ITicketChangeListener)
@@ -40,10 +57,12 @@ class PipebotNotePlugin(Component):
 
 	def write_message(self, msg):
 		self.log.debug("Pipebot msg: \"%s\"" % msg)
-		full_msg = unicode("%s: %s\n" % (self.orange("trac"), msg))
-		f = codecs.open(pipebot_file, encoding='utf-8', mode='a')
-		f.write(full_msg)
-		f.close()
+		try:
+			full_msg = unicode("%s: %s\n" % (self.orange("trac"), msg))
+			encoded_msg = codecs.encode(full_msg, 'utf-8')
+			say(encoded_msg)
+		except:
+			self.log.exception("Failed to write to pipebot, msg: '%s'." % msg)
 
 	def green(self, text):
 		return "\x033%s\x0f" % text
