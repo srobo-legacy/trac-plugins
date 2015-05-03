@@ -11,7 +11,7 @@ import urllib
 
 import os
 
-PIPE_PATH="/tmp/hash-srobo"
+PIPE_PATH="/var/run/irc/hash-srobo"
 
 def open_fifo():
     fifofd = os.open( PIPE_PATH, os.O_WRONLY | os.O_NONBLOCK )
